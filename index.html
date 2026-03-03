@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Booking</title>
+    <style>
+        body {
+            background:gray;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+        }
+        .seat {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 10px;
+            line-height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .available {
+            background-color: lightgreen;
+        }
+        .booked {
+            background-color: red;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Ticket Booking System</h1>
+
+<h3>Total Seats: <span id="total">0</span></h3>
+<h3>Remaining Seats: <span id="remaining">0</span></h3>
+
+<button id="randomBtn">Book Random Seat</button>
+
+<div id="seats"></div>
+
+<script>
+const API_URL = "http://localhost:3000";
+let availableSeats = [];
+
+async function loadSeats() {
+    const res = await fetch(`${API_URL}/api/seats`);
+    const data = await res.json();
+
+    document.getElementById("total").innerText = data.totalSeats;
+    document.getElementById("remaining").innerText = data.remainingSeats;
+
+    const seatContainer = document.getElementById("seats");
+    seatContainer.innerHTML = "";
+
+    availableSeats = [];
+
+    for (let i = 1; i <= data.totalSeats; i++) {
+        const div = document.createElement("div");
+        div.classList.add("seat");
+        div.innerText = i;
+
+        if (data.bookedSeats.includes(i)) {
+            div.classList.add("booked");
+        } else {
+            div.classList.add("available");
+            availableSeats.push(i);
+        }
+
+        seatContainer.appendChild(div);
+    }
+}
+
+async function bookRandomSeat() {
+    if (availableSeats.length === 0) {
+        alert("No seats remaining!");
+        return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * availableSeats.length);
+    const randomSeat = availableSeats[randomIndex];
+
+    const res = await fetch(`${API_URL}/api/book`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seat: randomSeat })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("Seat " + randomSeat + " booked!");
+    } else {
+        alert(data.message);
+    }
+
+    loadSeats();
+}
+
+document.getElementById("randomBtn").addEventListener("click", bookRandomSeat);
+
+loadSeats();
+</script>
+
+</body>
+</html>
