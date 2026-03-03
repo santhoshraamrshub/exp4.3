@@ -4,7 +4,9 @@ const { createClient } = require("redis");
 const app = express();
 app.use(cors());
 app.use(express.json());
-const redisClient = createClient();
+const redisClient = createClient({
+url: process.env.REDIS_URL
+});
 redisClient.on("error", (err) => {
     console.error("Redis Client Error", err);
 });
@@ -64,8 +66,9 @@ app.get("/api/seats", async (req, res) => {
         res.status(500).json({ error: "Error fetching seats" });
     }
 });
-app.listen(3000, () => {
-    console.log("Booking system running on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+console.log(`Booking system running on port ${PORT}`);
 });
 app.get("/api/reset", async (req, res) => {
     try {
