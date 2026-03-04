@@ -84,3 +84,6 @@ app.get("/api/reset", async (req, res) => {
         res.status(500).json({ error: "Error resetting seats" });
     }
 });
+app.get("/", (req, res) => {
+res.send("Ticket Booking System API is running 🚀");
+});
