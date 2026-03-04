@@ -75,6 +75,19 @@ async function loadSeats() {
         seatContainer.appendChild(div);
     }
 }
+async function resetSeats() {
+    try {
+        const response = await fetch(`${API_URL}/api/reset`, {
+            method: "POST"
+        });
+        const data = await response.json();
+        alert(data.message || "Seats reset successfully");
+        loadSeats();
+    } catch (error) {
+        console.error("Reset failed:", error);
+    }
+}
+document.getElementById("resetBtn").addEventListener("click", resetSeats);
 
 async function bookRandomSeat() {
     if (availableSeats.length === 0) {
