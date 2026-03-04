@@ -70,7 +70,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 console.log(`Booking system running on port ${PORT}`);
 });
-app.get("/api/reset", async (req, res) => {
+app.post("/api/reset", async (req, res) => {
     try {
         for (let i = 1; i <= TOTAL_SEATS; i++) {
             await redisClient.del(`booked:seat:${i}`);
