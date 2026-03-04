@@ -76,18 +76,26 @@ async function loadSeats() {
     }
 }
 async function resetSeats() {
+
+    if (!confirm("Are you sure you want to reset all seats?")) {
+        return;
+    }
+
     try {
         const response = await fetch(`${API_URL}/api/reset`, {
             method: "POST"
         });
+
         const data = await response.json();
-        alert(data.message || "Seats reset successfully");
+
+        alert("All seats have been reset!");
+
         loadSeats();
+
     } catch (error) {
-        console.error("Reset failed:", error);
+        console.error(error);
     }
 }
-document.getElementById("resetBtn").addEventListener("click", resetSeats);
 
 async function bookRandomSeat() {
     if (availableSeats.length === 0) {
